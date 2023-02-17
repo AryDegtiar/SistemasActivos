@@ -1,0 +1,11 @@
+poner en el body el codigo correspondiente en el responseEntity, verificar si necesita o sacar directamente el body
+
+hacer un paginable
+
+poner el swagger
+
+verificar el campo entity generico con persona
+
+buscar info en bian
+
+buscar info de sigleton
