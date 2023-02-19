@@ -1,5 +1,6 @@
 package com.api.rest.service;
 
+import com.api.rest.exception.BusinessException;
 import com.api.rest.interfaces.BaseService;
 import com.api.rest.model.Base;
 import com.api.rest.repository.BaseRepository;
@@ -40,7 +41,10 @@ public abstract class BaseServiceImpl <E extends Base, ID extends Serializable> 
     public E findById(ID id) throws Exception {
         try {
             Optional<E> optional = baseRepository.findById(id);
-            return optional.isPresent() ? optional.get() : null;
+            if (optional.isPresent())
+                return optional.get();
+            else
+                throw new Exception("No se encontró el registro con el id: " + id);
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }

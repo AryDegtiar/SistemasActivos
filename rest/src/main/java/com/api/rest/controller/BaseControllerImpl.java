@@ -1,5 +1,6 @@
 package com.api.rest.controller;
 
+import com.api.rest.exception.BusinessException;
 import com.api.rest.interfaces.BaseController;
 import com.api.rest.model.Base;
 import com.api.rest.service.BaseServiceImpl;
@@ -60,7 +61,8 @@ public abstract class BaseControllerImpl < E extends Base, S extends BaseService
         try {
             return ResponseEntity.status(HttpStatus.OK).body(service.findById(id));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontraron registros");
+            //return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontraron registros");
+            throw new BusinessException("404", HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
 
@@ -68,8 +70,7 @@ public abstract class BaseControllerImpl < E extends Base, S extends BaseService
     @PostMapping(path = {"/person"})
     public ResponseEntity<?> saveRecord(@Valid @RequestBody E entity, BindingResult result) {
         if (result.hasErrors()) {
-            System.out.println("Los campos no son válidos");
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result.getAllErrors());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Campos obligatorios invalidos");
         } else {
             try {
                 return ResponseEntity.status(HttpStatus.OK).body(service.save(entity));

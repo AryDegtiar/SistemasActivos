@@ -9,9 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class PersonaServiceImpl extends BaseServiceImpl<Persona, Integer> implements PersonaService {
-
     public PersonaServiceImpl(BaseRepository<Persona, Integer> baseRepository) {
         super(baseRepository);
     }
-
 }

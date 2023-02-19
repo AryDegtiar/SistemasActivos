@@ -1,6 +1,7 @@
 package com.api.rest.model;
 
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -15,9 +16,13 @@ import jakarta.persistence.*;
 @Table(name = "personas")
 public class Persona extends Base{
 
+    @NotNull @NotBlank @NotEmpty
     private String nombre;
+    @NotNull @NotBlank @NotEmpty
     private String apellido;
+    @NotNull @NotBlank @NotEmpty
     private String usuario;
+    @NotNull @NotBlank @NotEmpty
     private String clave;
 
     public Persona() {
