@@ -44,7 +44,7 @@ public abstract class BaseServiceImpl <E extends Base, ID extends Serializable> 
             if (optional.isPresent())
                 return optional.get();
             else
-                throw new Exception("No se encontró el registro con el id: " + id);
+                throw new Exception("No se encontró el registro con ese id");
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
@@ -70,8 +70,9 @@ public abstract class BaseServiceImpl <E extends Base, ID extends Serializable> 
                 entityOptional = Optional.of(entity);
                 entityOptional.get().setId(personId);
                 return baseRepository.save(entityOptional.get());
+            }else{
+                throw new Exception("No se encontró el registro con ese id");
             }
-            return null;
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }
@@ -85,8 +86,9 @@ public abstract class BaseServiceImpl <E extends Base, ID extends Serializable> 
             if (entityOptional.isPresent()) {
                 baseRepository.delete(entityOptional.get());
                 return true;
+            }else {
+                throw new Exception("No se encontró el registro con ese id");
             }
-            return false;
         } catch (Exception e) {
             throw new Exception(e.getMessage());
         }

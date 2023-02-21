@@ -1,4 +1,4 @@
-poner en el body el codigo correspondiente en el responseEntity, verificar si necesita o sacar directamente el body
+oner en el body el codigo correspondiente en el responseEntity, verificar si necesita o sacar directamente el body
 
 hacer un paginable
 

@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Objects;
+
 /* MEJORAR CADA OVERRIDE CREO Q EN RESPONSE ENTITY*/
 public abstract class BaseControllerImpl < E extends Base, S extends BaseServiceImpl<E,Integer>> implements BaseController<E,Integer> {
     @Autowired
@@ -25,22 +27,10 @@ public abstract class BaseControllerImpl < E extends Base, S extends BaseService
         try {
             return ResponseEntity.status(HttpStatus.OK).body(service.findAll());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontraron registros");
+            throw new BusinessException("500", HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
-    /* REVISAR */
-    /*
-    @Override
-    @GetMapping(path = {"/people/page"})
-    public ResponseEntity<?> getRecordBy(Pageable pageable) {
-        try {
-            return ResponseEntity.status(HttpStatus.OK).body(service.findAll(pageable));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontraron registros");
-        }
-    }
-     */
     @Override
     @GetMapping(path = {"/people/page"})
     public ResponseEntity<?> getRecordBy(Pageable pageable,
@@ -51,7 +41,7 @@ public abstract class BaseControllerImpl < E extends Base, S extends BaseService
             }
             return ResponseEntity.status(HttpStatus.OK).body(service.findAll(pageable));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontraron registros");
+            throw new BusinessException("500", HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
@@ -61,8 +51,11 @@ public abstract class BaseControllerImpl < E extends Base, S extends BaseService
         try {
             return ResponseEntity.status(HttpStatus.OK).body(service.findById(id));
         } catch (Exception e) {
-            //return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontraron registros");
-            throw new BusinessException("404", HttpStatus.NOT_FOUND, e.getMessage());
+            if (Objects.equals(e.getMessage(), "No se encontró el registro con ese id")) {
+                throw new BusinessException("404", HttpStatus.NOT_FOUND, e.getMessage());
+            }else{
+                throw new BusinessException("500", HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+            }
         }
     }
 
@@ -70,12 +63,16 @@ public abstract class BaseControllerImpl < E extends Base, S extends BaseService
     @PostMapping(path = {"/person"})
     public ResponseEntity<?> saveRecord(@Valid @RequestBody E entity, BindingResult result) {
         if (result.hasErrors()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Campos obligatorios invalidos");
+            throw new BusinessException("406", HttpStatus.NOT_ACCEPTABLE, "Campos obligatorios invalidos");
         } else {
             try {
                 return ResponseEntity.status(HttpStatus.OK).body(service.save(entity));
             } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontraron registros");
+                if (Objects.equals(e.getMessage(), "No se encontró el registro con ese id")) {
+                    throw new BusinessException("404", HttpStatus.NOT_FOUND, e.getMessage());
+                }else{
+                    throw new BusinessException("500", HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+                }
             }
         }
     }
@@ -86,7 +83,11 @@ public abstract class BaseControllerImpl < E extends Base, S extends BaseService
         try {
             return ResponseEntity.status(HttpStatus.OK).body(service.update(id,entity));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontraron registros");
+            if (Objects.equals(e.getMessage(), "No se encontró el registro con ese id")) {
+                throw new BusinessException("404", HttpStatus.NOT_FOUND, e.getMessage());
+            }else{
+                throw new BusinessException("500", HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+            }
         }
     }
 
@@ -96,7 +97,11 @@ public abstract class BaseControllerImpl < E extends Base, S extends BaseService
         try {
             return ResponseEntity.status(HttpStatus.OK).body(service.delete(id));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontraron registros");
+            if (Objects.equals(e.getMessage(), "No se encontró el registro con ese id")) {
+                throw new BusinessException("404", HttpStatus.NOT_FOUND, e.getMessage());
+            }else{
+                throw new BusinessException("500", HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+            }
         }
     }
 
